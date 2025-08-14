@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-server
+  labels:
+    app: book-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: book-server
+  template:
+    metadata:
+      labels:
+        app: book-server
+    spec:
+      containers:
+      - name: book-server
+        image: book-store-services/book-service:1.0-SNAPSHOT
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-service
+  labels:
+    app: book-server
+spec:
+  selector:
+    app: book-server
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      nodePort: 30081
+  type: NodePort

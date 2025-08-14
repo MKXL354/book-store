@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-server
+  labels:
+    app: order-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: order-server
+  template:
+    metadata:
+      labels:
+        app: order-server
+    spec:
+      containers:
+      - name: order-server
+        image: book-store-services/order-service:1.0-SNAPSHOT
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  labels:
+    app: order-server
+spec:
+  selector:
+    app: order-server
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      nodePort: 30082
+  type: NodePort
