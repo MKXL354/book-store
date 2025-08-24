@@ -17,6 +17,7 @@
   <modules>
     <module>book-service</module>
     <module>order-service</module>
+    <module>authentication</module>
   </modules>
 
   <properties>
@@ -67,13 +68,6 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
