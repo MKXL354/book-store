@@ -4,7 +4,7 @@ package com.mahdy.bookstore.authentication.exception;
  * @author Mehdi Kamali
  * @since 24/08/2025
  */
-public class EncryptionKeyLengthException extends AuthenticationException {
+public class EncryptionKeyLengthException extends AuthenticationRuntimeException {
 
     public EncryptionKeyLengthException() {
         super();

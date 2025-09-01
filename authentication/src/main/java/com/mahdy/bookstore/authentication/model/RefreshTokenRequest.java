@@ -4,10 +4,10 @@ import lombok.Data;
 
 /**
  * @author Mehdi Kamali
- * @since 24/08/2025
+ * @since 31/08/2025
  */
 @Data
-public class Token {
+public class RefreshTokenRequest {
 
-    private final String tokenString;
+    private final int maxLength;
 }

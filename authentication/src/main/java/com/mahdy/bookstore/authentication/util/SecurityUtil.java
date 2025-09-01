@@ -3,24 +3,29 @@ package com.mahdy.bookstore.authentication.util;
 import com.mahdy.bookstore.authentication.exception.AuthenticationRuntimeException;
 import com.mahdy.bookstore.authentication.util.model.EncodedAesSecretKey;
 import com.mahdy.bookstore.authentication.util.model.EncodedEcKeyPair;
+import com.mahdy.bookstore.authentication.util.model.EncodedHashedPassword;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.spec.*;
 import java.util.Base64;
 
 /**
  * @author Mehdi Kamali
  * @since 24/08/2025
  */
-public class KeyUtil {
+public class SecurityUtil {
+
+    //    TODO: no config for now
+    private static final int ITERATIONS = 10000;
+    private static final int KEY_LENGTH = 256;
 
     public static EncodedEcKeyPair generateEncodedEcKeyPair() {
         KeyPairGenerator keyPairGenerator;
@@ -71,5 +76,17 @@ public class KeyUtil {
     public static SecretKey generateAesSecretKey(String encodedAesKey) {
         byte[] keyBytes = Base64.getDecoder().decode(encodedAesKey);
         return new SecretKeySpec(keyBytes, "AES");
+    }
+
+    public static EncodedHashedPassword generateHashedPassword(String password, String salt) {
+        try {
+            byte[] saltBytes = salt.getBytes(StandardCharsets.UTF_8);
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), saltBytes, ITERATIONS, KEY_LENGTH);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+            return new EncodedHashedPassword(hash, Base64.getEncoder().encodeToString(hash));
+        } catch (Exception e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
     }
 }

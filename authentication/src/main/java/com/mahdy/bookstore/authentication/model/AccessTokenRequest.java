@@ -9,7 +9,7 @@ import java.util.Map;
  * @since 24/08/2025
  */
 @Data
-public class TokenRequest {
+public class AccessTokenRequest {
 
     private final Map<String, Object> claims;
     private final long timeToLiveMillis;

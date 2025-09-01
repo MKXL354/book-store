@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/book-store
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+token:
+  clock-skew-millis: 60000
+  access-time-to-live-millis: 600000
+  refresh-token-max-length: 128
+
+key:
+  public-key: MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4JBK6olQKiJidChPhGOAPDRvi48w3Wtl9Ra6R2lth9VPkf5RE3oS9qpoj3VHAez3s1vhX58tF0X18qaxFa5YDA==
+  private-key: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCCE1mp5z8yj20vSn03X+H4E+XFZVpBuDOtk1TT9jXHkBQ==
+  secret-key: v5QtY/LDz5/hGOfurQehS44salMTyaly2JaWBFhJcoI=

@@ -1,9 +1,12 @@
 package com.mahdy.bookstore.authentication.service;
 
-import com.mahdy.bookstore.authentication.exception.*;
+import com.mahdy.bookstore.authentication.exception.TokenExpiredException;
+import com.mahdy.bookstore.authentication.exception.TokenParseException;
+import com.mahdy.bookstore.authentication.exception.TokenSignatureException;
+import com.mahdy.bookstore.authentication.model.AccessTokenRequest;
+import com.mahdy.bookstore.authentication.model.RefreshTokenRequest;
 import com.mahdy.bookstore.authentication.model.Token;
 import com.mahdy.bookstore.authentication.model.TokenClaims;
-import com.mahdy.bookstore.authentication.model.TokenRequest;
 
 /**
  * @author Mehdi Kamali
@@ -11,8 +14,10 @@ import com.mahdy.bookstore.authentication.model.TokenRequest;
  */
 public interface TokenService {
 
-    Token generateToken(TokenRequest tokenRequest) throws GeneralAuthenticationException, EncryptionKeyLengthException;
+    Token generateAccessToken(AccessTokenRequest accessTokenRequest);
 
-    TokenClaims parseToken(Token token) throws TokenParseException, EncryptionKeyLengthException, GeneralAuthenticationException,
-            TokenSignatureException, TokenExpiredException;
+    TokenClaims parseAccessToken(Token token) throws TokenParseException, TokenSignatureException,
+            TokenExpiredException;
+
+    Token generateRandomRefreshToken(RefreshTokenRequest refreshTokenRequest);
 }
