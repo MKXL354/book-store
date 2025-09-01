@@ -1,6 +1,6 @@
-package com.mahdy.bookstore.bookservice.config;
+package com.mahdy.bookstore.bookservice.web.config;
 
-import com.mahdy.bookstore.bookservice.web.filter.AuthenticationInterceptor;
+import com.mahdy.bookstore.bookservice.web.interceptor.AuthenticationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

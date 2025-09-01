@@ -1,10 +1,11 @@
-package com.mahdy.bookstore.bookservice.web.filter;
+package com.mahdy.bookstore.bookservice.web.interceptor;
 
 import com.mahdy.bookstore.authentication.annotation.Authenticate;
 import com.mahdy.bookstore.authentication.model.Token;
 import com.mahdy.bookstore.authentication.service.TokenService;
 import com.mahdy.bookstore.bookservice.api.enumeration.ApplicationConstants;
 import com.mahdy.bookstore.bookservice.api.enumeration.UserRoles;
+import com.mahdy.bookstore.bookservice.api.model.RequestContext;
 import com.mahdy.bookstore.bookservice.exception.UserAuthorizationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements HandlerInterceptor {
+
+    private final RequestContext requestContext;
 
     private final TokenService tokenService;
 
@@ -45,13 +49,19 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         String accessToken = request.getHeader(ApplicationConstants.AUTHORIZATION_HEADER).replace(ApplicationConstants.TOKEN_PREFIX, "").trim();
-//        TODO: maybe do this in a scoped context bean?
         Map<String, Object> claims = tokenService.parseAccessToken(new Token(accessToken)).getClaims();
-        List<String> claimedRoles = (List<String>) claims.get(ApplicationConstants.USER_ROLES);
-        if (claimedRoles.stream().noneMatch(authorizedRoles::contains)) {
-            throw new UserAuthorizationException(String.format("user %s with roles %s is not authorized for roles %s",
-                    claims.get(ApplicationConstants.USER_ID), claims.get(ApplicationConstants.USER_ROLES), authorizedRoles));
+        fillRequestContext(claims);
+
+        if (requestContext.getUserRoles().stream().noneMatch(authorizedRoles::contains)) {
+            throw new UserAuthorizationException(String.format("user %d with roles %s is not authorized for roles %s",
+                    requestContext.getUserId(), requestContext.getUserRoles(), authorizedRoles));
         }
         return true;
+    }
+
+    private void fillRequestContext(Map<String, Object> userClaims) {
+        requestContext.setUserId((Long) userClaims.get(ApplicationConstants.USER_ID));
+        requestContext.setUserRoles(new HashSet<>((Collection<String>) userClaims.get(ApplicationConstants.USER_ROLES)));
+        requestContext.setUserClaims(userClaims);
     }
 }

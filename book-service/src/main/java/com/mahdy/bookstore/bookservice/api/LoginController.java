@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Mehdi Kamali
@@ -61,7 +61,7 @@ public class LoginController {
         Map<String, Object> claims = new HashMap<>();
         claims.put(ApplicationConstants.USER_ID, userEntity.getId());
 //        TODO: many-to-many roles received from db
-        claims.put(ApplicationConstants.USER_ROLES, List.of(UserRoles.WEB));
+        claims.put(ApplicationConstants.USER_ROLES, Set.of(UserRoles.WEB));
         return claims;
     }
 
@@ -73,5 +73,5 @@ public class LoginController {
     }
 }
 //TODO: in a standard impl these private methods should be done in other responsible classes.
-//TODO: way more logic like saving the refresh token and using it later
+//TODO: way more logic like saving the refresh token and using it later or refresh endpoint
 //TODO: maybe refactor this into a separate module and api? deal with sso and multi clients?
