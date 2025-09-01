@@ -7,11 +7,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Mehdi Kamali
  * @since 31/08/2025
  */
-@ConfigurationProperties(prefix = "key")
+@ConfigurationProperties(prefix = "token")
 @Data
-public class KeyConfig {
+public class LoginControllerProperties {
 
-    private final String privateKey;
-    private final String publicKey;
-    private final String secretKey;
+    private final int accessTimeToLiveMillis;
+    private final int refreshTokenMaxLength;
 }

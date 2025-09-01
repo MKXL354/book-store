@@ -1,5 +1,7 @@
 package com.mahdy.bookstore.bookservice.api;
 
+import com.mahdy.bookstore.authentication.annotation.Authenticate;
+import com.mahdy.bookstore.bookservice.api.enumeration.UserRoles;
 import com.mahdy.bookstore.bookservice.externalservice.OrderServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -24,5 +26,17 @@ public class TestController {
     @GetMapping(path = "/api/order-service/test", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getOrderServiceTest() {
         return orderServiceClient.getTest();
+    }
+
+    @GetMapping(path = "api/web-message")
+    @Authenticate(roles = UserRoles.WEB)
+    public String getWebMessage() {
+        return "web user accessed";
+    }
+
+    @GetMapping(path = "api/admin-message")
+    @Authenticate(roles = UserRoles.ADMIN)
+    public String getAdminMessage() {
+        return "admin user accessed";
     }
 }

@@ -1,14 +1,17 @@
 package com.mahdy.bookstore.bookservice.api;
 
+import com.mahdy.bookstore.authentication.annotation.Authenticate;
 import com.mahdy.bookstore.authentication.model.AccessTokenRequest;
 import com.mahdy.bookstore.authentication.model.RefreshTokenRequest;
 import com.mahdy.bookstore.authentication.model.Token;
 import com.mahdy.bookstore.authentication.service.TokenService;
 import com.mahdy.bookstore.authentication.util.SecurityUtil;
 import com.mahdy.bookstore.authentication.util.model.EncodedHashedPassword;
+import com.mahdy.bookstore.bookservice.api.enumeration.ApplicationConstants;
+import com.mahdy.bookstore.bookservice.api.enumeration.UserRoles;
 import com.mahdy.bookstore.bookservice.api.model.UserLoginRequestModel;
 import com.mahdy.bookstore.bookservice.api.model.UserLoginResponseModel;
-import com.mahdy.bookstore.bookservice.config.LoginControllerConfig;
+import com.mahdy.bookstore.bookservice.config.LoginControllerProperties;
 import com.mahdy.bookstore.bookservice.exception.EntityNotFoundException;
 import com.mahdy.bookstore.bookservice.exception.PasswordMismatchException;
 import com.mahdy.bookstore.bookservice.persistence.UserRepository;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,9 +38,10 @@ public class LoginController {
     private final UserRepository userRepository;
     private final TokenService tokenService;
 
-    private final LoginControllerConfig config;
+    private final LoginControllerProperties config;
 
     @PostMapping(path = "api/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Authenticate(roles = UserRoles.NONE)
     public UserLoginResponseModel login(@Valid @RequestBody UserLoginRequestModel request) throws EntityNotFoundException, PasswordMismatchException {
         UserEntity userEntity = userRepository.findByUsername(request.getUsername());
         if (userEntity == null) {
@@ -50,12 +55,13 @@ public class LoginController {
         Token accessToken = tokenService.generateAccessToken(new AccessTokenRequest(claims, config.getAccessTimeToLiveMillis()));
         Token refreshToken = tokenService.generateRandomRefreshToken(new RefreshTokenRequest(config.getRefreshTokenMaxLength()));
         return generateUserLoginResponseModel(accessToken.getTokenString(), refreshToken.getTokenString());
-//        TODO: way more logic like saving the refresh token and using it later, auth annotation and processing in filter
     }
 
     private Map<String, Object> generateLoginClaims(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userEntity.getId());
+        claims.put(ApplicationConstants.USER_ID, userEntity.getId());
+//        TODO: many-to-many roles received from db
+        claims.put(ApplicationConstants.USER_ROLES, List.of(UserRoles.WEB));
         return claims;
     }
 
@@ -67,3 +73,5 @@ public class LoginController {
     }
 }
 //TODO: in a standard impl these private methods should be done in other responsible classes.
+//TODO: way more logic like saving the refresh token and using it later
+//TODO: maybe refactor this into a separate module and api? deal with sso and multi clients?

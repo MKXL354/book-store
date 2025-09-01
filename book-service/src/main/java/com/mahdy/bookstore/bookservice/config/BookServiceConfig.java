@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class BookServiceConfig {
 
     @Bean
-    public TokenService tokenService(@Value("${token.clock-skew-millis}") int clockSkewMillis, KeyConfig keyConfig) {
-        return new TokenServiceImpl(clockSkewMillis, keyConfig.getPublicKey(), keyConfig.getPrivateKey(), keyConfig.getSecretKey());
+    public TokenService tokenService(@Value("${token.clock-skew-millis}") int clockSkewMillis, KeyProperties keyProperties) {
+        return new TokenServiceImpl(clockSkewMillis, keyProperties.getPublicKey(), keyProperties.getPrivateKey(), keyProperties.getSecretKey());
     }
 }
