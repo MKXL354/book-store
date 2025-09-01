@@ -1,7 +1,7 @@
 package com.mahdy.bookstore.bookservice.api;
 
 import com.mahdy.bookstore.authentication.annotation.Authenticate;
-import com.mahdy.bookstore.bookservice.api.enumeration.UserRoles;
+import com.mahdy.bookstore.bookservice.enumeration.UserRoles;
 import com.mahdy.bookstore.bookservice.externalservice.OrderServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

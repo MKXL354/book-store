@@ -7,15 +7,16 @@ import com.mahdy.bookstore.authentication.model.Token;
 import com.mahdy.bookstore.authentication.service.TokenService;
 import com.mahdy.bookstore.authentication.util.SecurityUtil;
 import com.mahdy.bookstore.authentication.util.model.EncodedHashedPassword;
-import com.mahdy.bookstore.bookservice.api.enumeration.ApplicationConstants;
-import com.mahdy.bookstore.bookservice.api.enumeration.UserRoles;
 import com.mahdy.bookstore.bookservice.api.model.UserLoginRequestModel;
 import com.mahdy.bookstore.bookservice.api.model.UserLoginResponseModel;
 import com.mahdy.bookstore.bookservice.config.LoginControllerProperties;
+import com.mahdy.bookstore.bookservice.enumeration.ApplicationConstants;
+import com.mahdy.bookstore.bookservice.enumeration.UserRoles;
 import com.mahdy.bookstore.bookservice.exception.EntityNotFoundException;
 import com.mahdy.bookstore.bookservice.exception.PasswordMismatchException;
 import com.mahdy.bookstore.bookservice.persistence.UserRepository;
 import com.mahdy.bookstore.bookservice.persistence.model.UserEntity;
+import com.mahdy.bookstore.bookservice.persistence.model.UserRoleEntity;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Mehdi Kamali
@@ -51,7 +52,7 @@ public class LoginController {
         if (!userEntity.getPassword().equals(hashedPassword.getHashedPassword())) {
             throw new PasswordMismatchException("provided user password is mismatched");
         }
-        Map<String, Object> claims = generateLoginClaims(userEntity); new HashMap<>();
+        Map<String, Object> claims = generateLoginClaims(userEntity);
         Token accessToken = tokenService.generateAccessToken(new AccessTokenRequest(claims, config.getAccessTimeToLiveMillis()));
         Token refreshToken = tokenService.generateRandomRefreshToken(new RefreshTokenRequest(config.getRefreshTokenMaxLength()));
         return generateUserLoginResponseModel(accessToken.getTokenString(), refreshToken.getTokenString());
@@ -60,8 +61,7 @@ public class LoginController {
     private Map<String, Object> generateLoginClaims(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(ApplicationConstants.USER_ID, userEntity.getId());
-//        TODO: many-to-many roles received from db
-        claims.put(ApplicationConstants.USER_ROLES, Set.of(UserRoles.WEB));
+        claims.put(ApplicationConstants.USER_ROLES, userEntity.getUserRoles().stream().map(UserRoleEntity::getRoleName).collect(Collectors.toSet()));
         return claims;
     }
 

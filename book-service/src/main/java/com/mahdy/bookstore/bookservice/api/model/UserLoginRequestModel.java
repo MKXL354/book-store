@@ -1,6 +1,6 @@
 package com.mahdy.bookstore.bookservice.api.model;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class UserLoginRequestModel {
 
-    @NotNull
+    @NotBlank
     private String username;
-    @NotNull
+    @NotBlank
     private String password;
 }

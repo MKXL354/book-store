@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * @author Mehdi Kamali
@@ -32,4 +33,11 @@ public class UserEntity {
 
     @Column(name = "REFRESH_TOKEN", columnDefinition = "VARCHAR(128)")
     private String refreshToken;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "APPLICATION_USER_ROLE",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+    private Set<UserRoleEntity> userRoles;
 }

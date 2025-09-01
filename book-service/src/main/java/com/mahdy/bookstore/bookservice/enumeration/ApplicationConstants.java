@@ -1,4 +1,4 @@
-package com.mahdy.bookstore.bookservice.api.enumeration;
+package com.mahdy.bookstore.bookservice.enumeration;
 
 /**
  * @author Mehdi Kamali
