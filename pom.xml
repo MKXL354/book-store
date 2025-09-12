@@ -119,6 +119,9 @@
                     <to>
                         <image>${docker.image.prefix}/${project.artifactId}:${project.version}</image>
                     </to>
+					<container>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+					</container>
                 </configuration>
             </plugin>
         </plugins>
